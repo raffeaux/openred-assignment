@@ -12,10 +12,10 @@ async def root():
     return {"message": os.listdir(os.getcwd())}
 
 @app.post("/start")
-async def start_pipeline(body: Request):
-    text = body.body
+async def start_pipeline(args: Request):
+    body = args.body
     with open(os.path.join(os.getcwd(), "raw/test.txt"), "w") as fp:
-        fp.write(text)
+        fp.write(body)
 
 @app.get("/check")
 async def check_result():
