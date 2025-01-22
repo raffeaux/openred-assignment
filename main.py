@@ -14,11 +14,11 @@ async def root():
 @app.post("/start")
 async def start_pipeline(body: Request):
     text = body.body
-    with open(os.path.join(os.getcwd(), "raw"), "w") as fp:
+    with open(os.path.join(os.getcwd(), "raw/test.txt"), "w") as fp:
         fp.write(text)
 
 @app.get("/check")
 async def check_result():
-    with open(os.path.join(os.getcwd(), "raw"), "r") as fp:
+    with open(os.path.join(os.getcwd(), "raw/test.txt"), "r") as fp:
         text = fp.read()
         return {"message": text}
