@@ -70,9 +70,9 @@ def validity(data, dqpath):
     #we use the conditions to fill in the flags
     for column in list(data):
 
-        data.loc[(conditions[column])&(data[column].isna()==False), "FLAG_IS_INVALID"] = 1
-        data.loc[(conditions[column])&(data[column].isna()==False), "FLAG_INVALID_FIELD"] = column
-        data.loc[(conditions[column])&(data[column].isna()==False), column] = numpy.nan
+        data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_IS_INVALID"] = 1
+        data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_INVALID_FIELD"] = column
+        data.loc[(conditions[column]==False)&(data[column].isna()==False), column] = numpy.nan
 
     #we calculate the number of invalid observations and 
     #isolate invalid fields
