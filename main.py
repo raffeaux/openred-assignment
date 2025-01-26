@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import os
+from datetime import datetime
+import dataQuality
+import requests
 
 app = FastAPI()
 
@@ -13,12 +16,30 @@ async def root():
 
 @app.post("/start")
 async def start_pipeline(args: Request):
+    #writing raw data to bucket
     body = args.body
-    with open(os.path.join(os.getcwd(), "raw/test.txt"), "w") as fp:
+    os.mkdir("data/raw")
+    datapath = os.path.join(os.getcwd(), "data/raw/raw_data_" + str(datetime.now()) + ".csv")
+    with open(datapath, "w") as fp:
         fp.write(body)
+
+    #preparing data quality folder
+    os.mkdir("data/data_quality")
+    dqpath = os.path.join(os.getcwd(), "data/data_quality/dq_log_" + str(datetime.now()) + ".txt")
+
+    #starting data quality pipeline
+    unique = dataQuality.uniqueness(datapath, dqpath)
+    valid = dataQuality.validity(unique, dqpath)
+
+    #sending webhook
+    with open(dqpath, "r") as logpath:
+        url = "https://hooks.slack.com/services/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"
+        payload = {"text":logpath.read()}
+        r = requests.post(url, json=payload)
+    
 
 @app.get("/check")
 async def check_result():
-    with open(os.path.join(os.getcwd(), "raw/test.txt"), "r") as fp:
+    with open(os.path.join(os.getcwd(), "data/test.txt"), "r") as fp:
         text = fp.read()
         return {"message": text}
