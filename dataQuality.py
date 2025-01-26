@@ -37,7 +37,7 @@ def uniqueness(datapath, dqpath):
     with open(dqpath, "a") as report:
         report.write("There are {} duplicate keys.\n".format(duplicate_address))
 
-    unique = df[(df["duplicate"]==False) & (df["duplicate_address"]==False)].drop(["duplicate", "duplicate_address"], axis=1)
+    unique = df[(df["duplicate"]==False) & (df["duplicate_address"]==False)].drop(["duplicate", "duplicate_address"], axis=1).reset_index(drop=True)
 
     return unique
 
