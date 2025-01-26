@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import dataQuality
 import requests
+import shutil
 
 app = FastAPI()
 
@@ -18,13 +19,15 @@ async def root():
 async def start_pipeline(args: Request):
     #writing raw data to bucket
     body = args.body
-    os.mkdir("data/raw")
+    if os.path.exists("data/raw")==False:
+        os.mkdir("data/raw")
     datapath = os.path.join(os.getcwd(), "data/raw/raw_data_" + str(datetime.now()) + ".csv")
     with open(datapath, "w") as fp:
         fp.write(body)
 
     #preparing data quality folder
-    os.mkdir("data/data_quality")
+    if os.path.exists("data/data_quality")==False:
+        os.mkdir("data/data_quality")
     dqpath = os.path.join(os.getcwd(), "data/data_quality/dq_log_" + str(datetime.now()) + ".txt")
 
     #starting data quality pipeline
