@@ -68,7 +68,7 @@ def validity(data, dqpath):
     data["FLAG_INVALID_FIELD"] = ""
 
     #we use the conditions to fill in the flags
-    for column in list(data):
+    for column in list(conditions.keys()):
 
         data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_IS_INVALID"] = 1
         data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_INVALID_FIELD"] = column
