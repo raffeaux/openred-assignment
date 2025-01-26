@@ -21,6 +21,7 @@ def set_conditions(data):
                   "plot_area_m2":data["plot_area_m2"]>20,
                   "volume_m3":data["volume_m3"]>50,
                   "address":[True if type(x)==str else False for x in data["address"]],
+                  "description":[True if type(x)==str else False for x in data["description"]],
                   "number_of_rooms":[re.search("kamer|slaapkamer", x) if type(x)==str else False for x in data["number_of_rooms"]],
                   "number_of_floors":[re.search("woonlaag|woonlage", x) if type(x)==str else False for x in data["number_of_floors"]],
                   "backyard":[re.search("m²|diep", x) if type(x)==str else False for x in data["backyard"]],
