@@ -33,7 +33,7 @@ async def start_pipeline(args: Request):
 
     #sending webhook
     with open(dqpath, "r") as logpath:
-        url = "https://hooks.slack.com/services/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"
+        url = os.environ["WEBHOOK_URL"]
         payload = {"text":logpath.read()}
         r = requests.post(url, json=payload)
     
