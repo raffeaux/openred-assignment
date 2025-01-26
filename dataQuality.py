@@ -29,13 +29,13 @@ def uniqueness(datapath, dqpath):
     df["duplicate"] = df.duplicated(keep=False)
     count_duplicates = df["duplicate"].sum()
     with open(dqpath, "w") as report:
-        report.write("Beginning data quality report at {}./n/nThere are {} duplicate rows./n".format(current_time, count_duplicates)) 
+        report.write("Beginning data quality report at {}.\n\nThere are {} duplicate rows.\n".format(current_time, count_duplicates)) 
 
     #the main ID is address, so as a second step we check that it is unique too
     df["duplicate_address"] = df.duplicated("address", False)
     duplicate_address = df["duplicate_address"].sum()
     with open(dqpath, "a") as report:
-        report.write("There are {} duplicate keys./n".format(duplicate_address))
+        report.write("There are {} duplicate keys.\n".format(duplicate_address))
 
     unique = df[(df["duplicate"]==False) & (df["duplicate_address"]==False)].drop(["duplicate", "duplicate_address"], axis=1)
 
@@ -81,7 +81,7 @@ def validity(data, dqpath):
 
     #we write all this info down
     with open(dqpath, "a") as report:
-        report.write("There are {} rows with invalid entries./nThe invalid fields are: {}.".format(totalInvalid, invalidFields))
+        report.write("There are {} rows with invalid entries.\nThe invalid fields are: {}.".format(totalInvalid, invalidFields))
 
     valid = data.copy()
 
