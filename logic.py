@@ -96,7 +96,6 @@ def conditionsFeatureMining(data):
     """
 
     conditions = {
-                  "address":[pandas.Series([x.split(" ")[-1] if type(x)==str else numpy.nan for x in data["address"]]), "city"],
                   "number_of_rooms":[pandas.Series([int(x.split(" kamer")[0]) if type(x)==str else numpy.nan for x in data["number_of_rooms"]]), "totalRooms"],
                   "number_of_rooms":[pandas.Series([int(x.split(" slaapkamer")[0].split("(")[1]) if (" slaapkamer" in x)&("(" in x) else numpy.nan for x in data["number_of_rooms"].fillna("no_info")]), "bedrooms"],
                   "number_of_floors":[pandas.Series([int(x.split(" woonla")[0]) if (type(x)==str)&("woonla" in x) else numpy.nan for x in data["number_of_floors"]]), "totalFloors"],

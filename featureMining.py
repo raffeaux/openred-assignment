@@ -65,7 +65,7 @@ def extractFeaturesCategorical(df, fmpath):
 
     #we can easily use pandas to create dummies for all columns
     #that have a single value
-    categories = ["new_housing_type", "city", "housing_status", "construction_type", "energy_label"]
+    categories = ["new_housing_type", "housing_status", "construction_type", "energy_label"]
 
     for c in categories:
         dummies = pandas.get_dummies(df[c], prefix=c, dtype=int)
