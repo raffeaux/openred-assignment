@@ -38,7 +38,8 @@ def separateDummies(values):
     """
 
     stage1 = [x.split(" en ") if type(x)==str else numpy.nan for x in values]
-    stage1.remove(numpy.nan)
+    if numpy.nan in stage1:
+        stage1.remove(numpy.nan)
     stage2 = [x.split(", ") if type(x)==str else numpy.nan for x in itertools.chain(*stage1)]
     stage3 = [x[1:] for x in set(itertools.chain(*stage2))] #removing the first letter so the expression
     #matches both upper case and lower case
