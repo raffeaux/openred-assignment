@@ -7,7 +7,7 @@ import featureMining
 import dbTransactions
 import shutil
 import pandas
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 import utils
 
 app = FastAPI()
@@ -66,16 +66,23 @@ async def start_pipeline(args: Request):
     #now is the time to send all this data to the database
     #first we specify the connection
     engine = create_engine(os.environ["SQL_ACCESSKEY"])
+    inspector = inspect(engine)
+    last_table = inspector.get_table_names()[-1]
+    if '-' in last_table:
+        new_table = "openred_clean_0"
+    else:
+        new_table = "openred_clean_" + str(int(last_table.split("_")[-1]) + 1)
+
     with engine.connect() as conn:
 
-        table = dbTransactions.generate_sql_table(clean, "openred_clean_" + str(datetime.now()), engine)
+        table = dbTransactions.generate_sql_table(clean, new_table, engine)
 
         dbTransactions.bulk_insert(clean, table, conn)
 
         conn.close()
 
         with open(dbpath, "w") as report:
-            report.write("Table {} created on {}.".format("openred_clean_" + str(datetime.now()), datetime.now()))
+            report.write("Table {} created on {}.".format(new_table, datetime.now()))
     
     #finally we send a final webhook to make sure the pipeline is finished
     utils.sendWebhook(dbpath)
