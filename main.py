@@ -92,7 +92,7 @@ async def insert_pipeline(args: Request):
 
     #writing raw data to bucket
     body = args.body
-    if os.path.exists("data/raw")==False:
+    if os.path.exists("data/raw/new_entries")==False:
         os.mkdir("data/raw/new_entries")
     datapath = os.path.join(os.getcwd(), "data/raw/new_entries/raw_data_" + str(datetime.now()) + ".csv")
     dqpath = os.path.join(os.getcwd(), "data/data_quality/dq_log_" + str(datetime.now()) + ".txt")
