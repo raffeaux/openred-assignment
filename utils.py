@@ -69,11 +69,11 @@ def conditionsCompleteness(data):
                   "number_of_bathrooms":[pandas.Series([bool(re.search("badkamer|Badkamer|toilet|Toilet", x)) if type(x)==str else False for x in data["description"]]), "FLAG_BATHROOM_IN_DESCRIPTION"],
                   "construction_type":[pandas.Series([bool(re.search("Nieuwbouw|Bestaande bouw", x)) if type(x)==str else False for x in data["description"]]), "FLAG_CONSTRUCTION_IN_DESCRIPTION"],
                   "housing_type":[pandas.Series([bool(re.search("appartement|Appartement|woning|flat|Maisonnette|maisonnette|Grachtenpand|grachtenpand|Tussenverdieping|tussenverdieping|Penthouse|penthouse|Herenhuis|herenhuis|Woonboerderij|woonboerderij", x)) if type(x)==str else False for x in data["description"]]), "FLAG_TYPE_IN_DESCRIPTION"],
-                  "energy_label":[pandas.Series([bool(re.search("energielabel|Energielabel", x)) if type(x)==str else False for x in data["description"]]), "FLAG_ENERGY_IN_DESCRIPTION"],
+                  "energy_label":[pandas.Series([bool(re.search("energielabel|Energielabel|energie|Energie", x)) if type(x)==str else False for x in data["description"]]), "FLAG_ENERGY_IN_DESCRIPTION"],
                   "housing_status":[pandas.Series([bool(re.search("Beschikbaar|Verkocht onder voorbehoud|Onder bod|Onder optie", x)) if type(x)==str else False for x in data["description"]]), "FLAG_STATUS_IN_DESCRIPTION"],
                   "garage":[pandas.Series([bool(re.search("garage|Garage|carport|Carport|inpandig|Inpandig|Parkeer|parkeer|Souterrain", x)) if type(x)==str else False for x in data["description"]]), "FLAG_GARAGE_IN_DESCRIPTION"],
                   "garden":[pandas.Series([bool(re.search("tuin|Tuin", x)) if type(x)==str else False for x in data["description"]]), "FLAG_GARDEN_IN_DESCRIPTION"],
                   "ownership":[pandas.Series([bool(re.search("erfpacht|Erfpacht|eigendom|Eigendom|belast|Belast", x)) if type(x)==str else False for x in data["description"]]), "FLAG_OWNERSHIP_IN_DESC"]
-                }
+                 }
     
     return conditions

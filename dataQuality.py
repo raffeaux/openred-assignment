@@ -77,11 +77,11 @@ def validity(data, dqpath):
     #we calculate the number of invalid observations and 
     #isolate invalid fields
     totalInvalid = data["FLAG_WAS_INVALID"].sum()
-    invalidFields = data["FLAG_INVALID_FIELD"][data["FLAG_WAS_INVALID"]].unique()
+    invalidFields = data["FLAG_INVALID_FIELD"][data["FLAG_WAS_INVALID"]==1].unique()
 
     #we write all this info down
     with open(dqpath, "a") as report:
-        report.write("There were {} rows with invalid entries.\nThe invalid fields are: {}.".format(totalInvalid, invalidFields))
+        report.write("There were {} rows with invalid entries.\nThe invalid fields are: {}.\n".format(totalInvalid, invalidFields))
 
     valid = data.copy()
 
@@ -115,11 +115,11 @@ def completeness(data, dqpath):
     
     #we calculate the total number of missing values and those explained by flags
     totalMissing = sum([data[column].isna().sum() for column in list(conditions.keys())])
-    totalExplained = sum([data[conditions[column][1]].isna().sum() for column in list(conditions.keys())])
+    totalExplained = sum([data[conditions[column][1]][data[column].isna()].sum() for column in list(conditions.keys())])
 
     #we write all this info down
     with open(dqpath, "a") as report:
-        report.write("There were {} missing values.\nOf these, {} could be explained by flags.".format(totalMissing, totalExplained))
+        report.write("There were {} missing values.\nOf these, {} could be explained by flags.\n".format(totalMissing, totalExplained))
 
     flagged = data.copy()
 
