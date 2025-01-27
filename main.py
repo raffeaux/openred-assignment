@@ -47,9 +47,8 @@ async def start_pipeline(args: Request):
 
     #now we remove the original columns except address, price, description, 
     #living_area_m2, plot_area_m2 and volume_m3
-    with pandas.read_csv(datapath) as df:
-        keep = ["address", "price", "description", "living_area_m2", "plot_area_m2", "volume_m3"]
-        columnNames = [x for x in list(df) if x not in keep]
+    keep = ["address", "price", "description", "living_area_m2", "plot_area_m2", "volume_m3"]
+    columnNames = [x for x in list(pandas.read_csv(datapath)) if x not in keep]
 
     clean = mined.drop(columnNames, axis=1)
 
