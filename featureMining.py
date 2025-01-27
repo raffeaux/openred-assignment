@@ -1,6 +1,7 @@
 import pandas
 import numpy
 import utils
+import logic
 from datetime import datetime
 
 def extractFeaturesNumerics(df, fmpath):
@@ -26,7 +27,7 @@ def extractFeaturesNumerics(df, fmpath):
     current_time = datetime.now()
 
     #defining conditions to approach feature extraction
-    conditions = utils.conditionsFeatureMining(df)
+    conditions = logic.conditionsFeatureMining(df)
 
     #we use the conditions to generate the new columns
     for column in list(conditions.keys()):
