@@ -23,11 +23,6 @@ def generate_sql_table(df, name, engine):
 
     string_dict = {c : Column(c, t) for (c, t) in zip(list(df), column_types)}
 
-    with open("error_log.txt", "w") as report:
-        report.write(str(string_dict))
-
-    utils.sendWebhook("error_log.txt")
-
     struct = Table(name, metadata, *list(string_dict.values()))
 
     metadata.create_all(engine)
