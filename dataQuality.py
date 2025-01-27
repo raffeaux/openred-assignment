@@ -1,7 +1,8 @@
 import pandas
 from datetime import datetime
-import utils
+import logic
 import numpy
+import utils
 
 def uniqueness(datapath, dqpath):
     """
@@ -29,13 +30,13 @@ def uniqueness(datapath, dqpath):
     df["duplicate"] = df.duplicated(keep=False)
     count_duplicates = df["duplicate"].sum()
     with open(dqpath, "w") as report:
-        report.write("Beginning data quality report at {}.\n\nThere were {} duplicate rows.\n".format(current_time, count_duplicates)) 
+        report.write("Data quality report for the run at {}.\n\nThere were {} duplicate rows. They have been dropped\n".format(current_time, count_duplicates)) 
 
     #the main ID is address, so as a second step we check that it is unique too
     df["duplicate_address"] = df.duplicated("address", keep=False)
     duplicate_address = df["duplicate_address"].sum()
     with open(dqpath, "a") as report:
-        report.write("There are {} duplicate keys.\n".format(duplicate_address))
+        report.write("There were {} duplicate keys. These have been dropped.\n".format(duplicate_address))
 
     unique = df[(df["duplicate"]==False) & (df["duplicate_address"]==False)].drop(["duplicate", "duplicate_address"], axis=1).reset_index(drop=True)
 
@@ -60,7 +61,7 @@ def validity(data, dqpath):
     """
 
     #we set conditions for validity of each column
-    conditions = utils.conditionsValidity(data)
+    conditions = logic.conditionsValidity(data)
 
     #we create two flag columns to identify invalid entries
     #and which field is invalid
@@ -106,7 +107,7 @@ def completeness(data, dqpath):
     """
 
     #we set conditions for completeness of each column
-    conditions = utils.conditionsCompleteness(data)
+    conditions = logic.conditionsCompleteness(data)
 
     #we use the conditions to fill in the flags
     for column in list(conditions.keys()):
@@ -121,11 +122,39 @@ def completeness(data, dqpath):
     with open(dqpath, "a") as report:
         report.write("There were {} missing values.\nOf these, {} could be explained by flags.\n".format(totalMissing, totalExplained))
 
-    flagged = data.copy()
+    flagged = data[data["price"].isna()==False].reset_index(drop=True)
 
     return flagged
 
-#def runDataQuality(datapath, dqpath):
+def runDataQuality(datapath, dqpath):
+    """
+    Wrapper function for the data quality pipeline. It consists of
+    three steps:
+    
+    1) Uniqueness: checks for duplicate entries and drops them
+    2) Validity: checks for invalid entries and replaces them with NaN
+    3) Completeness: checks for missing values and flags them if possible
+
+    These steps are used to fill in a log which can be found in the
+    data quality folder and are also sent via webhook.
+
+    Input:
+
+    datapath: a path-like object -> str
+    dqpath: a path-like object -> str
+
+    Output:
+
+    complete: a pandas.DataFrame object -> pandas.DataFrame
+    """
+
+    unique = uniqueness(datapath, dqpath)
+    valid = validity(unique, dqpath)
+    complete = completeness(valid, dqpath)
+
+    utils.sendWebhook(dqpath)
+
+    return complete
 
 
 

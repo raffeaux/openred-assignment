@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import os
 from datetime import datetime
 import dataQuality
-import requests
+import featureMining
 import shutil
 
 app = FastAPI()
@@ -30,17 +30,16 @@ async def start_pipeline(args: Request):
         os.mkdir("data/data_quality")
     dqpath = os.path.join(os.getcwd(), "data/data_quality/dq_log_" + str(datetime.now()) + ".txt")
 
-    #starting data quality pipeline
-    unique = dataQuality.uniqueness(datapath, dqpath)
-    valid = dataQuality.validity(unique, dqpath)
-    complete = dataQuality.completeness(valid, dqpath)
+    #running data quality pipeline
+    complete = dataQuality.runDataQuality(datapath, dqpath)
 
-    #sending webhook
-    with open(dqpath, "r") as logpath:
-        url = os.environ["WEBHOOK_URL"]
-        payload = {"text":logpath.read()}
-        r = requests.post(url, json=payload)
-    
+    #preparing feature mining folder
+    if os.path.exists("data/feature_mining")==False:
+        os.mkdir("data/feature_mining")
+    fmpath = os.path.join(os.getcwd(), "data/feature_mining/fm_log_" + str(datetime.now()) + ".txt")
+
+    #running feature mining pipeline
+    mined = featureMining.runFeatureMining(complete, fmpath)
 
 @app.get("/check")
 async def check_result():
