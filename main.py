@@ -4,7 +4,11 @@ import os
 from datetime import datetime
 import dataQuality
 import featureMining
+import dbTransactions
 import shutil
+import pandas
+from sqlalchemy import create_engine
+import utils
 
 app = FastAPI()
 
@@ -40,6 +44,43 @@ async def start_pipeline(args: Request):
 
     #running feature mining pipeline
     mined = featureMining.runFeatureMining(complete, fmpath)
+
+    #now we remove the original columns except address, price, description, 
+    #living_area_m2, plot_area_m2 and volume_m3
+    with pandas.read_csv(datapath) as df:
+        keep = ["address", "price", "description", "living_area_m2", "plot_area_m2", "volume_m3"]
+        columnNames = [x for x in list(df) if x not in keep]
+
+    clean = mined.drop(columnNames, axis=1)
+
+    #writing clean data to bucket
+    if os.path.exists("data/clean")==False:
+        os.mkdir("data/clean")
+    datapath = os.path.join(os.getcwd(), "data/clean/clean_data_" + str(datetime.now()) + ".csv")
+    clean.to_csv(datapath, index=False)
+
+    #preparing DB folder
+    if os.path.exists("data/db")==False:
+        os.mkdir("data/db")
+    dbpath = os.path.join(os.getcwd(), "data/db/db_log_" + str(datetime.now()) + ".txt")
+
+    #now is the time to send all this data to the database
+    #first we specify the connection
+    with create_engine(os.environ["SQL_ACCESSKEY"]) as engine:
+
+        conn = engine.connect()
+
+        table = dbTransactions.generate_sql_table(clean, "openred_clean_" + str(datetime.now()), engine)
+
+        dbTransactions.bulk_insert(df, table, conn)
+
+        conn.close()
+
+        with open(dbpath, "w") as report:
+            report.write("Table {} created on {}.".format("openred_clean_" + str(datetime.now()), datetime.now()))
+    
+    #finally we send a final webhook to make sure the pipeline is finished
+    utils.sendWebhook(dbpath)
 
 @app.get("/check")
 async def check_result():

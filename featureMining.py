@@ -93,7 +93,7 @@ def extractFeaturesCategorical(df, fmpath):
 
     #we write a log
     with open(fmpath, "a") as report:
-        report.write("The numerical part finished without errors.\n")
+        report.write("The categorical part finished without errors.\n")
 
     categorics = df.copy()
 
