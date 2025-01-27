@@ -76,8 +76,8 @@ def validity(data, dqpath):
 
     #we calculate the number of invalid observations and 
     #isolate invalid fields
-    totalInvalid = data["FLAG_IS_INVALID"].sum()
-    invalidFields = data["FLAG_INVALID_FIELD"][data["FLAG_IS_INVALID"]].unique()
+    totalInvalid = data["FLAG_WAS_INVALID"].sum()
+    invalidFields = data["FLAG_INVALID_FIELD"][data["FLAG_WAS_INVALID"]].unique()
 
     #we write all this info down
     with open(dqpath, "a") as report:
