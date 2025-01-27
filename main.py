@@ -65,13 +65,12 @@ async def start_pipeline(args: Request):
 
     #now is the time to send all this data to the database
     #first we specify the connection
-    with create_engine(os.environ["SQL_ACCESSKEY"]) as engine:
-
-        conn = engine.connect()
+    engine = create_engine(os.environ["SQL_ACCESSKEY"])
+    with engine.connect() as conn:
 
         table = dbTransactions.generate_sql_table(clean, "openred_clean_" + str(datetime.now()), engine)
 
-        dbTransactions.bulk_insert(df, table, conn)
+        dbTransactions.bulk_insert(clean, table, conn)
 
         conn.close()
 
