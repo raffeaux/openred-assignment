@@ -103,10 +103,10 @@ def conditionsFeatureMining(data):
                   "number_of_floors":[pandas.Series([1 if (type(x)==str)&("zolder" in x) else 0 for x in data["number_of_floors"]]), "zolder"],
                   "number_of_floors":[pandas.Series([1 if (type(x)==str)&("kelder" in x) else 0 for x in data["number_of_floors"]]), "kelder"],
                   "number_of_floors":[pandas.Series([1 if (type(x)==str)&("vliering" in x) else 0 for x in data["number_of_floors"]]), "vliering"],
-                  "backyard":[pandas.Series([float(x.split(" m²")[0]) if (type(x)==str)&(" m²" in x) else numpy.nan for x in data["backyard"]]), "backyardM2"],
-                  "floor_level":[pandas.Series([int(x.split("e woonlaag")[0]) if (type(x)==str)&("e woonlaag" in x) else 0 for x in data["floor_level"]]), "whichFloor"],
-                  "number_of_bathrooms":[pandas.Series([int(x.split(" badkamer")[0]) if (type(x)==str)&(" badkamer" in x) else numpy.nan for x in data["number_of_bathrooms"]]), "bathrooms"],
-                  "number_of_bathrooms":[pandas.Series([int(x.split(" apart")[0][-1]) if (type(x)==str)&(" apart" in x) else numpy.nan for x in data["number_of_bathrooms"]]), "separateToilets"]
+                  "backyard":[pandas.Series([float(x.split(" m²")[0]) if " m²" in x else numpy.nan for x in data["backyard"].fillna("no info")]), "backyardM2"],
+                  "floor_level":[pandas.Series([int(x.split("e woonlaag")[0]) if "e woonlaag" in x else 0 for x in data["floor_level"].fillna("no info")]), "whichFloor"],
+                  "number_of_bathrooms":[pandas.Series([int(x.split(" badkamer")[0]) if " badkamer" in x else numpy.nan for x in data["number_of_bathrooms"].fillna("no info")]), "bathrooms"],
+                  "number_of_bathrooms":[pandas.Series([int(x.split(" apart")[0][-1]) if " apart" in x else numpy.nan for x in data["number_of_bathrooms"].fillna("no_info")]), "separateToilets"]
                  }
     
     return conditions
