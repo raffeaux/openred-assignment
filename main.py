@@ -91,7 +91,7 @@ async def start_pipeline(args: Request):
 async def insert_pipeline(args: Request):
 
     #writing raw data to bucket
-    body = args.bod
+    body = args.body
     datapath = os.path.join(os.getcwd(), "data/raw/new_entries/raw_data_" + str(datetime.now()) + ".csv")
     dqpath = os.path.join(os.getcwd(), "data/data_quality/dq_log_" + str(datetime.now()) + ".txt")
     with open(datapath, "w") as fp:
