@@ -78,7 +78,7 @@ def extractFeaturesCategorical(df, fmpath):
     for column in multiValues:
         colNames = utils.separateDummies(column)
         for name in colNames:
-            df[name] = [1 if (type(x)==str)&(name in x) else 0 for x in df[column]]
+            df[name] = [1 if name in x else 0 for x in df[column].fillna("no info")]
 
     #as far as ownership is concerned, because it's just one column
     #perhaps it's not worth the pain to develop a whole logic
