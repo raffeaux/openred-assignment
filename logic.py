@@ -98,7 +98,7 @@ def conditionsFeatureMining(data):
     conditions = {
                   "address":[pandas.Series([x.split(" ")[-1] if type(x)==str else numpy.nan for x in data["address"]]), "city"],
                   "number_of_rooms":[pandas.Series([int(x.split(" kamer")[0]) if type(x)==str else numpy.nan for x in data["number_of_rooms"]]), "totalRooms"],
-                  "number_of_rooms":[pandas.Series([int(x.split(" slaapkamer")[0].split("("[1])) if (type(x)==str)&("laapkamer" in x) else numpy.nan for x in data["number_of_rooms"]]), "bedrooms"],
+                  "number_of_rooms":[pandas.Series([int(x.split(" slaapkamer")[0].split("("[1])) if (type(x)==str)&("laapkamer" in x)&("(" in x) else numpy.nan for x in data["number_of_rooms"]]), "bedrooms"],
                   "number_of_floors":[pandas.Series([int(x.split(" woonla")[0]) if (type(x)==str)&("woonla" in x) else numpy.nan for x in data["number_of_floors"]]), "totalFloors"],
                   "number_of_floors":[pandas.Series([1 if (type(x)==str)&("zolder" in x) else 0 for x in data["number_of_floors"]]), "zolder"],
                   "number_of_floors":[pandas.Series([1 if (type(x)==str)&("kelder" in x) else 0 for x in data["number_of_floors"]]), "kelder"],
