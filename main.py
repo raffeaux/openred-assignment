@@ -33,6 +33,7 @@ async def start_pipeline(args: Request):
     #starting data quality pipeline
     unique = dataQuality.uniqueness(datapath, dqpath)
     valid = dataQuality.validity(unique, dqpath)
+    complete = dataQuality.completeness(valid, dqpath)
 
     #sending webhook
     with open(dqpath, "r") as logpath:

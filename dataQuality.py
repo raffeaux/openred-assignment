@@ -29,10 +29,10 @@ def uniqueness(datapath, dqpath):
     df["duplicate"] = df.duplicated(keep=False)
     count_duplicates = df["duplicate"].sum()
     with open(dqpath, "w") as report:
-        report.write("Beginning data quality report at {}.\n\nThere are {} duplicate rows.\n".format(current_time, count_duplicates)) 
+        report.write("Beginning data quality report at {}.\n\nThere were {} duplicate rows.\n".format(current_time, count_duplicates)) 
 
     #the main ID is address, so as a second step we check that it is unique too
-    df["duplicate_address"] = df.duplicated("address", False)
+    df["duplicate_address"] = df.duplicated("address", keep=False)
     duplicate_address = df["duplicate_address"].sum()
     with open(dqpath, "a") as report:
         report.write("There are {} duplicate keys.\n".format(duplicate_address))
@@ -60,35 +60,35 @@ def validity(data, dqpath):
     """
 
     #we set conditions for validity of each column
-    conditions = utils.set_conditions(data)
+    conditions = utils.conditionsValidity(data)
 
     #we create two flag columns to identify invalid entries
     #and which field is invalid
-    data["FLAG_IS_INVALID"] = 0
+    data["FLAG_WAS_INVALID"] = 0
     data["FLAG_INVALID_FIELD"] = ""
 
     #we use the conditions to fill in the flags
     for column in list(conditions.keys()):
 
-        data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_IS_INVALID"] = 1
+        data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_WAS_INVALID"] = 1
         data.loc[(conditions[column]==False)&(data[column].isna()==False), "FLAG_INVALID_FIELD"] = column
         data.loc[(conditions[column]==False)&(data[column].isna()==False), column] = numpy.nan
 
     #we calculate the number of invalid observations and 
     #isolate invalid fields
     totalInvalid = data["FLAG_IS_INVALID"].sum()
-    invalidFields = data["FLAG_INVALID_FIELD"].unique()
+    invalidFields = data["FLAG_INVALID_FIELD"][data["FLAG_IS_INVALID"]].unique()
 
     #we write all this info down
     with open(dqpath, "a") as report:
-        report.write("There are {} rows with invalid entries.\nThe invalid fields are: {}.".format(totalInvalid, invalidFields))
+        report.write("There were {} rows with invalid entries.\nThe invalid fields are: {}.".format(totalInvalid, invalidFields))
 
     valid = data.copy()
 
     return valid
 
 
-#def completeness(data, dqpath):
+def completeness(data, dqpath):
     """
     Checks unique and valid data rows for missing values, dropping rows
     where these render the row useless or otherwise using flags to 
@@ -102,7 +102,30 @@ def validity(data, dqpath):
 
     Output:
 
-    complete: data with explained missing values -> pandas.DataFrame
+    flagged: data with explained missing values -> pandas.DataFrame
     """
+
+    #we set conditions for completeness of each column
+    conditions = utils.conditionsCompleteness(data)
+
+    #we use the conditions to fill in the flags
+    for column in list(conditions.keys()):
+        data[conditions[column][1]] = 0
+        data.loc[(data[column].isna())&(conditions[column][0]), conditions[column][1]] = 1
+    
+    #we calculate the total number of missing values and those explained by flags
+    totalMissing = sum([data[column].isna().sum() for column in list(conditions.keys())])
+    totalExplained = sum([data[conditions[column][1]].isna().sum() for column in list(conditions.keys())])
+
+    #we write all this info down
+    with open(dqpath, "a") as report:
+        report.write("There were {} missing values.\nOf these, {} could be explained by flags.".format(totalMissing, totalExplained))
+
+    flagged = data.copy()
+
+    return flagged
+
+#def runDataQuality(datapath, dqpath):
+
 
 
