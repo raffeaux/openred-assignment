@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Table, Column,  MetaData, Integer, String, Float, Boolean, insert
 import pandas
 import numpy
+import utils
 
 def generate_sql_table(df, name, engine):
     """
@@ -21,6 +22,11 @@ def generate_sql_table(df, name, engine):
     #but saving the type for each column
 
     string_dict = {c : Column(c, t) for (c, t) in zip(list(df), column_types)}
+
+    with open("error_log.txt", "w") as report:
+        report.write(str(string_dict))
+
+    utils.sendWebhook("error_log.txt")
 
     struct = Table(name, metadata, *list(string_dict.values()))
 
