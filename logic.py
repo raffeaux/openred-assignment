@@ -26,7 +26,7 @@ def conditionsValidity(data):
                   "description":pandas.Series([True if type(x)==str else False for x in data["description"]]),
                   "number_of_rooms":pandas.Series([bool(re.search("kamer|slaapkamer", x)) if type(x)==str else False for x in data["number_of_rooms"]]),
                   "number_of_floors":pandas.Series([bool(re.search("woonlaag|woonlage", x)) if type(x)==str else False for x in data["number_of_floors"]]),
-                  "backyard":pandas.Series([bool(re.search("m²|diep", x)) if type(x)==str else False for x in data["backyard"]]),
+                  "backyard":pandas.Series([bool(re.search("m²", x)) if type(x)==str else False for x in data["backyard"]]),
                   "floor_level":pandas.Series([bool(re.search("woonlaag|Begane grond", x)) if type(x)==str else False for x in data["floor_level"]]),
                   "number_of_bathrooms":pandas.Series([bool(re.search("badkamer|toilet", x)) if type(x)==str else False for x in data["number_of_bathrooms"]]),
                   "construction_type":pandas.Series([bool(re.search("bouw", x)) if type(x)==str else False for x in data["construction_type"]]),
