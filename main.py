@@ -7,7 +7,7 @@ import featureMining
 import dbTransactions
 import shutil
 import pandas
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, MetaData
 import utils
 
 app = FastAPI()
@@ -130,9 +130,13 @@ async def insert_pipeline(args: Request):
         inspector = inspect(engine)
         last_table = inspector.get_table_names()[-1]
 
+        metadata = MetaData()
+        metadata.reflect(engine)
+        table = metadata.tables[last_table]
+
         with engine.connect() as conn:
 
-            dbTransactions.bulk_insert(clean, last_table, conn)
+            dbTransactions.bulk_insert(clean, table, conn)
 
             conn.close()
 
