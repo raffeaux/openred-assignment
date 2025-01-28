@@ -105,7 +105,7 @@ async def insert_pipeline(args: Request):
     last_file = os.listdir("data/raw")[-1]
     columnSchema = list(pandas.read_csv(os.path.join("data/raw", last_file)))
 
-    if list(pandas.read_csv(datapath)) == columnSchema:
+    if set(list(pandas.read_csv(datapath))) == set(columnSchema):
 
         #running data quality
         complete = dataQuality.runDataQuality(datapath, dqpath)
